@@ -14,7 +14,7 @@ public class Homophone {
 	
 	public static void main(String[] args) {
 		UALDictionary<String, Pronunciation> PDict = new UALDictionary<String, Pronunciation>();
-        File file = new File("../resource/asnlib/publicdata/cmudict.0.7a.txt");
+        File file = new File("D:\\Programming\\Projects\\CS114 - Intro to CS II\\src\\week6\\cmudict.0.7a.txt"); // "../resource/asnlib/publicdata/cmudict.0.7a.txt"
 	    
 
 

@@ -3,12 +3,13 @@ package lib;
 import java.util.ArrayList;
 
 @SuppressWarnings({"javadoc", "rawtypes"})
+public
 class UALDictionary<Key extends Comparable, E> implements Dictionary<Key, E> {
 	private static final int defaultSize = 10;
 	private ArrayList<KVpair<Key, E>> list;
 
 	// Constructors
-	UALDictionary() {
+	public UALDictionary() {
 		this(defaultSize);
 	}
 
