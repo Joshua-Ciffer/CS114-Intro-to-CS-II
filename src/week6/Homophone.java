@@ -1,4 +1,4 @@
-package lib;
+package week6;
 
 import java.io.File;
 import java.io.FileNotFoundException;

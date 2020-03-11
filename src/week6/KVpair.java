@@ -1,4 +1,4 @@
-package lib;
+package week6;
 
 /** Container class for a key-value pair */
 @SuppressWarnings("javadoc")

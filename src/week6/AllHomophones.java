@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import lib.Pronunciation;
-import lib.UALDictionary;
-
 /**
  * Problem Set 6
  *
