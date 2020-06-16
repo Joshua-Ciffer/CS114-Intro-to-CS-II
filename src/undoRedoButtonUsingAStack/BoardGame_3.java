@@ -19,15 +19,15 @@ public class BoardGame_3 extends Application {
 	private static final int TURN_WHITE = 1;
 
 	// Game image objects
-	Image emptyImage = new Image("file:D:\\Programming\\Projects\\CS114 - Intro to CS II\\src\\undoRedoButtonUsingAStack\\emptySquare80.gif");
-	Image blackImage = new Image("file:D:\\Programming\\Projects\\CS114 - Intro to CS II\\src\\undoRedoButtonUsingAStack\\blackPiece80.gif");
-	Image whiteImage = new Image("file:D:\\Programming\\Projects\\CS114 - Intro to CS II\\src\\undoRedoButtonUsingAStack\\whitePiece80.gif");
-	Image blackMoveImage = new Image("file:D:\\Programming\\Projects\\CS114 - Intro to CS II\\src\\undoRedoButtonUsingAStack\\blackMoveSquare80.gif");
-	Image whiteMoveImage = new Image("file:D:\\Programming\\Projects\\CS114 - Intro to CS II\\src\\undoRedoButtonUsingAStack\\whiteMoveSquare80.gif");
+	final Image emptyImage = new Image("file:D:\\Programming\\Projects\\CS114 - Intro to CS II\\src\\undoRedoButtonUsingAStack\\emptySquare80.gif");
+	final Image blackImage = new Image("file:D:\\Programming\\Projects\\CS114 - Intro to CS II\\src\\undoRedoButtonUsingAStack\\blackPiece80.gif");
+	final Image whiteImage = new Image("file:D:\\Programming\\Projects\\CS114 - Intro to CS II\\src\\undoRedoButtonUsingAStack\\whitePiece80.gif");
+	final Image blackMoveImage = new Image("file:D:\\Programming\\Projects\\CS114 - Intro to CS II\\src\\undoRedoButtonUsingAStack\\blackMoveSquare80.gif");
+	final Image whiteMoveImage = new Image("file:D:\\Programming\\Projects\\CS114 - Intro to CS II\\src\\undoRedoButtonUsingAStack\\whiteMoveSquare80.gif");
 
 	// Game image objects
-	double imageWidth = emptyImage.getWidth();
-	double imageHeight = emptyImage.getHeight();
+	final double imageWidth = emptyImage.getWidth();
+	final double imageHeight = emptyImage.getHeight();
 
 	// Current player turn
 	private int turn = TURN_BLACK;
@@ -56,7 +56,7 @@ public class BoardGame_3 extends Application {
 	// Game board
 	private Image board[][] = new Image[NUM_ROWS][NUM_COLS];
 	private final Group group = new Group(canvas);
-	private final Scene scene = new Scene(group, imageWidth * NUM_COLS, imageHeight * NUM_ROWS);
+	private final Scene scene = new Scene(group, imageWidth * NUM_ROWS, imageHeight * NUM_COLS);
 
 	// Returns image at specified board location
 	private Image getBoardContent(int row, int col) {
@@ -67,22 +67,33 @@ public class BoardGame_3 extends Application {
 		return board[row][col];
 	}
 
+	// Flips color of game piece
+	private void flip(int row, int col) {
+		if (getBoardContent(row, col) == whiteImage) {
+			board[row][col] = blackImage;
+			graphicsContext.drawImage(blackImage, row * imageWidth, col * imageHeight);
+		} else if (getBoardContent(row, col) == blackImage) {
+			board[row][col] = whiteImage;
+			graphicsContext.drawImage(whiteImage, row * imageWidth, col * imageHeight);
+		}
+	}
+
 	// Inits the GUI
 	@Override
 	public void start(Stage stage) throws Exception {
 
 		for (int row = 0; row < NUM_ROWS; row++) {
 			for (int col = 0; col < NUM_COLS; col++) {
-				graphicsContext.drawImage(emptyImage, col * imageWidth, row * imageHeight);
+				graphicsContext.drawImage(emptyImage, row * imageWidth, col * imageHeight);
 				board[row][col] = emptyImage;
 			}
 		}
 		// Put code here to setup initial position
-		graphicsContext.drawImage(whiteImage, 3 * imageWidth, 4 * imageHeight);
-		graphicsContext.drawImage(blackImage, 4 * imageWidth, 4 * imageHeight);
-		graphicsContext.drawImage(blackImage, 3 * imageWidth, 3 * imageHeight);
-		graphicsContext.drawImage(whiteImage, 4 * imageWidth, 3 * imageHeight);
-		
+		graphicsContext.drawImage(whiteImage, ((NUM_ROWS / 2) - 1) * imageWidth, (NUM_COLS / 2) * imageHeight);
+		graphicsContext.drawImage(blackImage, (NUM_ROWS / 2) * imageWidth, (NUM_COLS / 2) * imageHeight);
+		graphicsContext.drawImage(blackImage, ((NUM_ROWS / 2) - 1) * imageWidth, ((NUM_COLS / 2) - 1) * imageHeight);
+		graphicsContext.drawImage(whiteImage, (NUM_ROWS / 2) * imageWidth, ((NUM_COLS / 2) - 1) * imageHeight);
+
 		stage.setScene(scene);
 		stage.setTitle("Board Game 3");
 		stage.show();
@@ -92,18 +103,29 @@ public class BoardGame_3 extends Application {
 
 			@Override
 			public void handle(MouseEvent e) {
-				int row = (int)(e.getY() / imageHeight);
-				int col = (int)(e.getX() / imageWidth);
-				// --------------------------------------------------------------------
-				// Check clicked square is empty.
-				// Compute flips. Not a valid move if no flips.
-				//
-				graphicsContext.drawImage(currentTurnImage, col * imageWidth, row * imageHeight);
-				board[row][col] = currentTurnImage;
-				turn = 1 - turn;
-				currentTurnImage = moveImages[turn];
-				previousTurnImage = moveImages[1 - turn];
-				System.out.println((int)(e.getY() / imageHeight) + ", " + (int)(e.getX() / imageWidth));
+				int row = (int)(e.getX() / imageHeight);
+				int col = (int)(e.getY() / imageWidth);
+				// Check clicked square is empty, and also not already filled
+				if (getBoardContent(row, col) == emptyImage && getBoardContent(row, col) != whiteImage && getBoardContent(row, col) != blackImage) {
+					// Compute flips. Not a valid move if no flips.
+					int[] flipRow = new int[NUM_ROWS];
+					int[] flipCol = new int[NUM_COLS];
+					int i = 0;
+					while (row - i >= 0 && getBoardContent(row - i, col) == previousTurnImage) {	// Up
+
+					}
+					// Draw object
+					graphicsContext.drawImage(currentTurnImage, row * imageWidth, col * imageHeight);
+					board[row][col] = currentTurnImage;
+					// new Move(row, col, turn);
+
+					// Reset for next turn
+					turn = 1 - turn;
+					currentTurnImage = moveImages[turn];
+					previousTurnImage = moveImages[1 - turn];
+					System.out.println(row + ", " + col);
+				}
+
 			}
 		};
 
@@ -111,12 +133,22 @@ public class BoardGame_3 extends Application {
 	}
 
 	private class Move {
+
 		int turn;
-		int row_move;
-		int col_move;
-		int flip_count;
-		int row_flip[];
-		int col_flip[];
+		int moveRow;
+		int moveCol;
+		int numFlips;
+		int flipRow[];
+		int flipCol[];
+
+		private Move(int turn, int moveRow, int moveCol, int[] flipRow, int[] flipCol) {
+			this.turn = turn;
+			this.moveRow = moveRow;
+			this.moveCol = moveCol;
+			this.flipRow = flipRow;
+			this.flipCol = flipCol;
+		}
+
 	}
 
 }
