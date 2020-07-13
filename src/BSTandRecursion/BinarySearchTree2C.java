@@ -1,6 +1,7 @@
 package BSTandRecursion;
 
 // ====================================================
+@SuppressWarnings("javadoc")
 public class BinarySearchTree2C {
 
 	private Node root;
@@ -124,29 +125,21 @@ public class BinarySearchTree2C {
 
 	// ====================================================
 	public void insert(int id) {
-		Node newNode = new Node(id);
-		if (root == null) {
-			root = newNode;
-			return;
+		root = insert2(root, id);
+	}
+	
+	// Recursive insert
+	public Node insert2(Node node, int n) {
+		if (node == null) {
+			node = new Node(n);
+			return node;
 		}
-		Node current = root;
-		Node parent = null;
-		while (true) {
-			parent = current;
-			if (id < current.data) {
-				current = current.left;
-				if (current == null) {
-					parent.left = newNode;
-					return;
-				}
-			} else {
-				current = current.right;
-				if (current == null) {
-					parent.right = newNode;
-					return;
-				}
-			}
+		if (n < node.data) {
+			node.left = insert2(node.left, n);
+		} else if (n > node.data) {
+			node.right = insert2(node.right, n);
 		}
+		return node;
 	}
 
 	// ====================================================
@@ -164,6 +157,54 @@ public class BinarySearchTree2C {
 	}
 
 	// ====================================================
+
+	public int depth() {
+		return depth(this.root);
+	}
+	
+	public int depth(Node leaf) {
+		if (leaf == null) {
+			return 0;
+		} else {
+			int leftDepth = depth(leaf.left);
+			int rightDepth = depth(leaf.right);
+			if (leftDepth > rightDepth) {
+				return leftDepth + 1;
+			} else {
+				return rightDepth + 1;
+			}
+		}
+	}
+
+	public int node_count() {
+		return node_count(this.root);
+	}
+	
+	public int node_count(Node node) {
+		if (node == null) {
+			return 0;
+		} else {
+			int count = 1;
+			if (node.left != null) {
+				count += node_count(node.left);
+			}
+			if (node.right != null) {
+				count += node_count(node.right);
+			}
+			return count;
+		}
+	}
+	
+	public BinarySearchTree2C clone() {
+		return clone(this.root);
+	}
+	
+	public BinarySearchTree2C clone(Node node) {
+		BinarySearchTree2C clone = new BinarySearchTree2C();
+		clone.root = node;
+		return clone;
+	}
+
 	public static void main(String arg[]) {
 		BinarySearchTree2C b = new BinarySearchTree2C();
 		BinarySearchTree2C c = b;
@@ -181,6 +222,11 @@ public class BinarySearchTree2C {
 		b.insert(16);
 		System.out.println("Original Tree b: ");
 		b.display();
+		System.out.println("B depth: " + b.depth(b.root));
+		System.out.println("B node count: " + b.node_count(b.root));
+		BinarySearchTree2C bClone = b.clone();
+		System.out.println("Clone Tree B: ");
+		bClone.display();
 		System.out.println("Copy Tree c: ");
 		c.display();
 		System.out.println("");
@@ -194,10 +240,12 @@ public class BinarySearchTree2C {
 		b.display();
 		System.out.println("Copy Tree c: ");
 		c.display();
+
 	}
 }
 
 // ====================================================
+@SuppressWarnings("javadoc")
 class Node {
 
 	int data;
