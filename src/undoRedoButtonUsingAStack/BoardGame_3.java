@@ -1,5 +1,7 @@
 package undoRedoButtonUsingAStack;
 
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -108,11 +110,12 @@ public class BoardGame_3 extends Application {
 				// Check clicked square is empty
 				if (getBoardContent(row, col) == emptyImage) {
 					// Compute flips. Not a valid move if no flips.
-					int[] flipRow = new int[NUM_ROWS];
-					int[] flipCol = new int[NUM_COLS];
+					ArrayList<Integer> flipRow = new ArrayList<Integer>(0);
+					ArrayList<Integer> flipCol = new ArrayList<Integer>(0);
 					final int[] dX = {-1, 0, 1, -1, 1, -1, 0, 1};
 					final int[] dY = {-1, -1, -1, 0, 0, 1, 1, 1};
 					int x = row, y = col;
+					boolean validMove = false;
 					for (int i = 0; i < dX.length; i++) {
 						boolean valid = false;
 						for (int j = 0; j < NUM_ROWS; j++) {
@@ -121,18 +124,53 @@ public class BoardGame_3 extends Application {
 							if ((x < 0) || (x >= NUM_ROWS) || (y < 0) || (y >= NUM_COLS)) {
 								break;
 							}
+							if (board[x][y] == emptyImage) {
+								break;
+							} else if (board[x][y] != currentTurnImage) {
+								valid = true;
+							} else if (valid) {
+								validMove = true;
+							} else {
+								break;
+							}
 						}
+						validMove = false;
 					}
-					// Draw object
-					graphicsContext.drawImage(currentTurnImage, row * imageWidth, col * imageHeight);
-					board[row][col] = currentTurnImage;
-					// new Move(row, col, turn);
+					if (validMove) {
+						// Draw object
+						graphicsContext.drawImage(currentTurnImage, row * imageWidth, col * imageHeight);
+						board[row][col] = currentTurnImage;
+						// new Move(row, col, turn);
+						for (int i = 0; i < dX.length; i++) {
+							int x1 = row, y1 = col;
+							for (int j = 0; j < NUM_ROWS; j++) {
+								x1 += dX[i];
+								y1 += dY[i];
+								if ((x < 0) || (x >= NUM_ROWS) || (y < 0) || (y >= NUM_COLS)) {
+									break;
+								}
+								if (board[x1][y1] == emptyImage) {
+									break;
+								} else if (board[x1][y1] != currentTurnImage) {
+									flipRow.add(x1);
+									flipCol.add(y1);
+								} else {
+									for (int k = 0; k < flipRow.size(); k++) {
+										graphicsContext.drawImage(currentTurnImage, flipRow.get(k) * imageWidth, flipCol.get(k) * imageHeight);
+										board[flipRow.get(k)][flipCol.get(k)] = currentTurnImage;
+									}
+								}
+								flipRow.clear();
+								flipCol.clear();
+							}
+						}
+						// Reset for next turn
+						turn = 1 - turn;
+						currentTurnImage = moveImages[turn];
+						previousTurnImage = moveImages[1 - turn];
+						System.out.println(row + ", " + col);
+					}
 
-					// Reset for next turn
-					turn = 1 - turn;
-					currentTurnImage = moveImages[turn];
-					previousTurnImage = moveImages[1 - turn];
-					System.out.println(row + ", " + col);
 				}
 
 			}
@@ -147,10 +185,10 @@ public class BoardGame_3 extends Application {
 		int moveRow;
 		int moveCol;
 		int numFlips;
-		int flipRow[];
-		int flipCol[];
+		ArrayList<Integer> flipRow;
+		ArrayList<Integer> flipCol;
 
-		private Move(int turn, int moveRow, int moveCol, int[] flipRow, int[] flipCol) {
+		private Move(int turn, int moveRow, int moveCol, ArrayList<Integer> flipRow, ArrayList<Integer> flipCol) {
 			this.turn = turn;
 			this.moveRow = moveRow;
 			this.moveCol = moveCol;
